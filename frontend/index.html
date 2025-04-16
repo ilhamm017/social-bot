@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Social Bot Dashboard</title>
+  <link href="https://unpkg.com/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet"/>
+</head>
+<body class="theme-light">
+  <div class="container py-4">
+    <h1 class="mb-4">Manajemen Akun Bot</h1>
+    <form id="addAccountForm" class="card p-3">
+      <div class="mb-3">
+        <input name="platform" class="form-control" placeholder="Platform (instagram/facebook)">
+      </div>
+      <div class="mb-3">
+        <input name="username" class="form-control" placeholder="Username">
+      </div>
+      <div class="mb-3">
+        <input name="sessionPath" class="form-control" placeholder="Path ke sesi file">
+      </div>
+      <div class="mb-3">
+        <input name="proxy" class="form-control" placeholder="Proxy (optional)">
+      </div>
+      <button type="submit" class="btn btn-primary">Tambah Akun</button>
+    </form>
+
+    <hr>
+
+    <div id="accountList" class="row mt-4"></div>
+  </div>
+
+  <script>
+    async function fetchAccounts() {
+      const res = await fetch('http://localhost:3000/api/accounts');
+      const data = await res.json();
+      const container = document.getElementById('accountList');
+      container.innerHTML = '';
+      data.forEach(acc => {
+        container.innerHTML += `
+          <div class="col-md-4">
+            <div class="card p-3 mb-3">
+              <h4>${acc.platform} - ${acc.username}</h4>
+              <p>Proxy: ${acc.proxy || 'Tidak ada'}</p>
+              <p>Sesi: ${acc.sessionPath}</p>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    document.getElementById('addAccountForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const body = {
+        platform: form.platform.value,
+        username: form.username.value,
+        sessionPath: form.sessionPath.value,
+        proxy: form.proxy.value,
+      };
+      await fetch('http://localhost:3000/api/accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      fetchAccounts();
+      form.reset();
+    });
+
+    fetchAccounts();
+  </script>
+</body>
+</html>
