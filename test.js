@@ -1,15 +1,11 @@
+// Bot like facebook 
 const puppeteer = require('puppeteer')
-
-const getQuotes = async () => {
+async function main() {
     const browser = await puppeteer.launch({
-        headless: false,
-        defaultViewport: null
+        headless:false
     })
-
     const page = await browser.newPage()
-    await page.goto("http://quotes.toscrape.com/", {
-        waitUntil: "domcontentloaded"
-    }) 
+    await page.goto('https://www.facebook.com/share/p/1YzVk56gPq/')
 }
 
-getQuotes()
+main()
